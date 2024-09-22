@@ -1,0 +1,14 @@
+“Analyze and improve the initial AI-generated Java code by identifying areas for improvement, modification, or expansion, ensuring clarity and relevance. Pay special attention to the following:
+
+Improvement: Identify inefficiencies, performance bottlenecks, or areas of poor readability. Suggest enhancements or more optimal approaches where applicable.
+
+Alteration: Examine the code structure and design patterns to ensure alignment with the SOLID principles. Adjust the code to better follow Object-Oriented Programming (OOP) best practices, focusing on adaptability and maintainability.
+
+Addition: Introduce new functionalities, methods, or libraries that could make the code more comprehensive and applicable in a real-world internship setting. Consider integrating Java features commonly used in professional settings, such as multi-threading, error handling, or Java Streams.
+
+Relativity: Modify examples and scenarios within the code to reflect challenges that a university student might encounter during internships. Examples may include building APIs, handling data, or integrating third-party libraries used in enterprise-level Java development.
+
+Contextual Relevance: Ensure examples maintain relatability to common tasks faced in internships (e.g., working with databases, writing unit tests, designing RESTful services). Adjust comments and explanations to be instructional, as though guiding a junior developer in an internship setting.
+
+Self-Reference: Utilize AI's ability to reference previous iterations and feedback to improve upon its own outputs. Offer solutions based on your interpretation and internship-related experiences while continuously refining the initial AI-generated responses.”*
+

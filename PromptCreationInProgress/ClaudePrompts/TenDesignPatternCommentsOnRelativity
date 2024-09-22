@@ -1,0 +1,780 @@
+Certainly! I'll select and implement 10 design patterns from the categories you've mentioned, providing explanations, discussing their relevance, and including code examples for each. Let's start with the first pattern.
+
+1. Singleton Pattern (Creational)
+
+
+
+```java
+/**
+ * Thread-safe Singleton implementation using enum
+ */
+public enum DatabaseConnection {
+    INSTANCE;
+
+    private Connection connection;
+
+    DatabaseConnection() {
+        // Simulate database connection
+        connection = new Connection();
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void executeQuery(String query) {
+        System.out.println("Executing query: " + query);
+    }
+
+    // Simulated Connection class
+    private static class Connection {
+        // Connection details
+    }
+}
+
+// Usage
+public class SingletonDemo {
+    public static void main(String[] args) {
+        DatabaseConnection.INSTANCE.executeQuery("SELECT * FROM users");
+    }
+}
+
+```
+
+Explanation:
+- The Singleton pattern ensures that a class has only one instance and provides a global point of access to it.
+- In this example, we use an enum to implement a thread-safe Singleton for a database connection.
+
+Relevance in modern Java applications:
+- Singletons are useful in microservices for managing shared resources like connection pools or configuration settings.
+- In reactive systems, Singletons can be used to maintain global state or provide centralized services.
+- In cloud-native environments, Singletons can manage cloud service connections or act as service locators.
+
+2. Factory Method Pattern (Creational)
+
+
+
+```java
+/**
+ * Factory Method Pattern implementation for creating payment processors
+ */
+public interface PaymentProcessor {
+    void processPayment(double amount);
+}
+
+public class CreditCardProcessor implements PaymentProcessor {
+    @Override
+    public void processPayment(double amount) {
+        System.out.println("Processing credit card payment of $" + amount);
+    }
+}
+
+public class PayPalProcessor implements PaymentProcessor {
+    @Override
+    public void processPayment(double amount) {
+        System.out.println("Processing PayPal payment of $" + amount);
+    }
+}
+
+public abstract class PaymentProcessorFactory {
+    public abstract PaymentProcessor createProcessor();
+
+    public void processPayment(double amount) {
+        PaymentProcessor processor = createProcessor();
+        processor.processPayment(amount);
+    }
+}
+
+public class CreditCardProcessorFactory extends PaymentProcessorFactory {
+    @Override
+    public PaymentProcessor createProcessor() {
+        return new CreditCardProcessor();
+    }
+}
+
+public class PayPalProcessorFactory extends PaymentProcessorFactory {
+    @Override
+    public PaymentProcessor createProcessor() {
+        return new PayPalProcessor();
+    }
+}
+
+// Usage
+public class FactoryMethodDemo {
+    public static void main(String[] args) {
+        PaymentProcessorFactory factory = new CreditCardProcessorFactory();
+        factory.processPayment(100.00);
+
+        factory = new PayPalProcessorFactory();
+        factory.processPayment(50.00);
+    }
+}
+
+```
+
+Explanation:
+- The Factory Method pattern defines an interface for creating an object but lets subclasses decide which class to instantiate.
+- In this example, we create different payment processors using factory methods.
+
+Relevance in modern Java applications:
+- In microservices, Factory Method can be used to create different service implementations based on configuration or runtime conditions.
+- In reactive systems, it can be used to create different types of reactive streams or processors.
+- In cloud-native apps, it can help create appropriate cloud service clients based on the deployment environment.
+
+3. Observer Pattern (Behavioral)
+
+
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Observer Pattern implementation for a stock price monitoring system
+ */
+public interface StockObserver {
+    void update(String stock, double price);
+}
+
+public class StockMarket {
+    private List<StockObserver> observers = new ArrayList<>();
+    private String stockSymbol;
+    private double price;
+
+    public void addObserver(StockObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(StockObserver observer) {
+        observers.remove(observer);
+    }
+
+    public void setStockPrice(String symbol, double price) {
+        this.stockSymbol = symbol;
+        this.price = price;
+        notifyObservers();
+    }
+
+    private void notifyObservers() {
+        for (StockObserver observer : observers) {
+            observer.update(stockSymbol, price);
+        }
+    }
+}
+
+public class StockTrader implements StockObserver {
+    private String name;
+
+    public StockTrader(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void update(String stock, double price) {
+        System.out.println(name + " notified. " + stock + " price: $" + price);
+    }
+}
+
+// Usage
+public class ObserverDemo {
+    public static void main(String[] args) {
+        StockMarket market = new StockMarket();
+        market.addObserver(new StockTrader("Trader 1"));
+        market.addObserver(new StockTrader("Trader 2"));
+
+        market.setStockPrice("AAPL", 150.00);
+        market.setStockPrice("GOOGL", 2800.00);
+    }
+}
+
+```
+
+Explanation:
+- The Observer pattern defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.
+- In this example, we implement a simple stock market monitoring system where traders (observers) are notified of stock price changes.
+
+Relevance in modern Java applications:
+- In microservices, the Observer pattern can be used for event-driven communication between services.
+- In reactive systems, it's fundamental to implementing reactive streams and handling asynchronous events.
+- In cloud-native environments, it can be used for monitoring and reacting to changes in distributed systems.
+
+Certainly! Let's continue with the remaining seven design patterns.
+
+4. Adapter Pattern (Structural)
+
+
+
+```java
+/**
+ * Adapter Pattern implementation for integrating a legacy payment system
+ */
+public interface ModernPaymentGateway {
+    void processPayment(double amount);
+}
+
+public class LegacyPaymentSystem {
+    public void oldProcessPayment(String amount) {
+        System.out.println("Legacy system processing payment of " + amount);
+    }
+}
+
+public class PaymentSystemAdapter implements ModernPaymentGateway {
+    private LegacyPaymentSystem legacySystem;
+
+    public PaymentSystemAdapter(LegacyPaymentSystem legacySystem) {
+        this.legacySystem = legacySystem;
+    }
+
+    @Override
+    public void processPayment(double amount) {
+        String legacyAmount = String.format("%.2f", amount);
+        legacySystem.oldProcessPayment(legacyAmount);
+    }
+}
+
+// Usage
+public class AdapterDemo {
+    public static void main(String[] args) {
+        LegacyPaymentSystem legacySystem = new LegacyPaymentSystem();
+        ModernPaymentGateway modernGateway = new PaymentSystemAdapter(legacySystem);
+
+        modernGateway.processPayment(100.00);
+    }
+}
+
+```
+
+Explanation:
+- The Adapter pattern allows incompatible interfaces to work together.
+- In this example, we adapt a legacy payment system to work with a modern payment gateway interface.
+
+Relevance in modern Java applications:
+- In microservices, adapters can integrate services with different interfaces or protocols.
+- In cloud-native apps, adapters can help integrate various cloud services or legacy systems.
+- In reactive systems, adapters can convert between different types of reactive streams or event models.
+
+5. Decorator Pattern (Structural)
+
+
+
+```java
+/**
+ * Decorator Pattern implementation for a configurable logging system
+ */
+public interface Logger {
+    void log(String message);
+}
+
+public class BasicLogger implements Logger {
+    @Override
+    public void log(String message) {
+        System.out.println("Log: " + message);
+    }
+}
+
+public abstract class LoggerDecorator implements Logger {
+    protected Logger wrappedLogger;
+
+    public LoggerDecorator(Logger logger) {
+        this.wrappedLogger = logger;
+    }
+
+    @Override
+    public void log(String message) {
+        wrappedLogger.log(message);
+    }
+}
+
+public class TimestampDecorator extends LoggerDecorator {
+    public TimestampDecorator(Logger logger) {
+        super(logger);
+    }
+
+    @Override
+    public void log(String message) {
+        String timestampedMessage = String.format("[%tF %<tT] %s", System.currentTimeMillis(), message);
+        super.log(timestampedMessage);
+    }
+}
+
+public class EncryptionDecorator extends LoggerDecorator {
+    public EncryptionDecorator(Logger logger) {
+        super(logger);
+    }
+
+    @Override
+    public void log(String message) {
+        String encryptedMessage = encrypt(message);
+        super.log(encryptedMessage);
+    }
+
+    private String encrypt(String message) {
+        // Simple encryption for demonstration
+        return "ENCRYPTED[" + message + "]";
+    }
+}
+
+// Usage
+public class DecoratorDemo {
+    public static void main(String[] args) {
+        Logger logger = new TimestampDecorator(new EncryptionDecorator(new BasicLogger()));
+        logger.log("This is a test message");
+    }
+}
+
+```
+
+Explanation:
+- The Decorator pattern allows behavior to be added to an individual object, either statically or dynamically, without affecting the behavior of other objects from the same class.
+- In this example, we create a configurable logging system where various decorators can be applied to add functionality like timestamps or encryption.
+
+Relevance in modern Java applications:
+- In microservices, decorators can add cross-cutting concerns like logging, monitoring, or security to service calls.
+- In reactive systems, decorators can add behavior to reactive streams, such as retrying, caching, or rate limiting.
+- In cloud-native apps, decorators can enhance cloud service clients with additional functionality.
+
+6. Command Pattern (Behavioral)
+
+
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Command Pattern implementation for a simple task management system
+ */
+public interface Command {
+    void execute();
+    void undo();
+}
+
+public class Task {
+    private String name;
+    private boolean completed;
+
+    public Task(String name) {
+        this.name = name;
+        this.completed = false;
+    }
+
+    public void complete() {
+        completed = true;
+        System.out.println("Task '" + name + "' completed");
+    }
+
+    public void reopen() {
+        completed = false;
+        System.out.println("Task '" + name + "' reopened");
+    }
+}
+
+public class CompleteTaskCommand implements Command {
+    private Task task;
+
+    public CompleteTaskCommand(Task task) {
+        this.task = task;
+    }
+
+    @Override
+    public void execute() {
+        task.complete();
+    }
+
+    @Override
+    public void undo() {
+        task.reopen();
+    }
+}
+
+public class TaskManager {
+    private List<Command> commandHistory = new ArrayList<>();
+
+    public void executeCommand(Command command) {
+        command.execute();
+        commandHistory.add(command);
+    }
+
+    public void undoLastCommand() {
+        if (!commandHistory.isEmpty()) {
+            Command lastCommand = commandHistory.remove(commandHistory.size() - 1);
+            lastCommand.undo();
+        }
+    }
+}
+
+// Usage
+public class CommandDemo {
+    public static void main(String[] args) {
+        TaskManager taskManager = new TaskManager();
+        Task task1 = new Task("Implement feature X");
+        Task task2 = new Task("Write documentation");
+
+        taskManager.executeCommand(new CompleteTaskCommand(task1));
+        taskManager.executeCommand(new CompleteTaskCommand(task2));
+        taskManager.undoLastCommand();
+    }
+}
+
+```
+
+Explanation:
+- The Command pattern encapsulates a request as an object, thereby allowing for parameterization of clients with different requests, queue or log requests, and support undoable operations.
+- In this example, we implement a simple task management system where completing tasks are commands that can be executed and undone.
+
+Relevance in modern Java applications:
+- In microservices, the Command pattern can be used to implement idempotent operations and ensure consistency in distributed systems.
+- In reactive systems, commands can represent asynchronous operations that can be composed and scheduled.
+- In cloud-native apps, commands can encapsulate complex operations that need to be distributed across multiple services or containers.
+
+7. Dependency Injection (DI) Pattern (Modern)
+
+
+
+```java
+/**
+ * Dependency Injection Pattern implementation
+ */
+public interface MessageService {
+    void sendMessage(String message, String receiver);
+}
+
+public class EmailService implements MessageService {
+    @Override
+    public void sendMessage(String message, String receiver) {
+        System.out.println("Sending email to " + receiver + ": " + message);
+    }
+}
+
+public class SMSService implements MessageService {
+    @Override
+    public void sendMessage(String message, String receiver) {
+        System.out.println("Sending SMS to " + receiver + ": " + message);
+    }
+}
+
+public class NotificationService {
+    private MessageService messageService;
+
+    // Constructor injection
+    public NotificationService(MessageService messageService) {
+        this.messageService = messageService;
+    }
+
+    public void sendNotification(String message, String receiver) {
+        messageService.sendMessage(message, receiver);
+    }
+}
+
+// Simple DI container
+public class DIContainer {
+    public static NotificationService getNotificationService() {
+        // Here we're deciding which implementation to inject
+        return new NotificationService(new EmailService());
+    }
+}
+
+// Usage
+public class DependencyInjectionDemo {
+    public static void main(String[] args) {
+        NotificationService notificationService = DIContainer.getNotificationService();
+        notificationService.sendNotification("Hello, DI!", "user@example.com");
+    }
+}
+
+```
+
+Explanation:
+- Dependency Injection is a technique whereby one object supplies the dependencies of another object.
+- In this example, we inject a MessageService into the NotificationService, allowing us to easily switch between email and SMS implementations.
+
+Relevance in modern Java applications:
+- In microservices, DI helps manage dependencies between different components and services.
+- In reactive systems, DI can be used to inject reactive components and manage their lifecycles.
+- In cloud-native apps, DI facilitates the injection of cloud-specific services and configurations.
+
+Certainly! Let's continue with the remaining three design patterns.
+
+8. Repository Pattern (Modern)
+
+
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Repository Pattern implementation for managing user data
+ */
+public class User {
+    private int id;
+    private String name;
+    private String email;
+
+    // Constructor, getters, and setters omitted for brevity
+}
+
+public interface UserRepository {
+    User save(User user);
+    Optional<User> findById(int id);
+    List<User> findAll();
+    void delete(int id);
+}
+
+public class InMemoryUserRepository implements UserRepository {
+    private List<User> users = new ArrayList<>();
+    private int nextId = 1;
+
+    @Override
+    public User save(User user) {
+        if (user.getId() == 0) {
+            user.setId(nextId++);
+            users.add(user);
+        } else {
+            users.removeIf(u -> u.getId() == user.getId());
+            users.add(user);
+        }
+        return user;
+    }
+
+    @Override
+    public Optional<User> findById(int id) {
+        return users.stream().filter(u -> u.getId() == id).findFirst();
+    }
+
+    @Override
+    public List<User> findAll() {
+        return new ArrayList<>(users);
+    }
+
+    @Override
+    public void delete(int id) {
+        users.removeIf(u -> u.getId() == id);
+    }
+}
+
+public class UserService {
+    private UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User createUser(String name, String email) {
+        User user = new User(0, name, email);
+        return userRepository.save(user);
+    }
+
+    public Optional<User> getUserById(int id) {
+        return userRepository.findById(id);
+    }
+
+    // Other service methods omitted for brevity
+}
+
+// Usage
+public class RepositoryPatternDemo {
+    public static void main(String[] args) {
+        UserRepository userRepository = new InMemoryUserRepository();
+        UserService userService = new UserService(userRepository);
+
+        User newUser = userService.createUser("John Doe", "john@example.com");
+        System.out.println("Created user: " + newUser.getName());
+
+        Optional<User> retrievedUser = userService.getUserById(newUser.getId());
+        retrievedUser.ifPresent(user -> System.out.println("Retrieved user: " + user.getName()));
+    }
+}
+
+```
+
+Explanation:
+- The Repository pattern mediates between the domain and data mapping layers, acting like an in-memory collection of domain objects.
+- In this example, we implement a UserRepository that manages user data, with an in-memory implementation for simplicity.
+
+Relevance in modern Java applications:
+- In microservices, repositories provide a clean abstraction for data access, making it easier to switch between different data stores.
+- In reactive systems, repositories can be implemented to return reactive types (e.g., Mono or Flux in Project Reactor).
+- In cloud-native apps, repositories can abstract away the complexities of distributed data storage.
+
+9. Circuit Breaker Pattern (Modern)
+
+
+
+```java
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+
+/**
+ * Circuit Breaker Pattern implementation
+ */
+public class CircuitBreaker {
+    private final int failureThreshold;
+    private final long resetTimeout;
+    private AtomicInteger failureCount;
+    private long lastFailureTime;
+    private State state;
+
+    public enum State {
+        CLOSED, OPEN, HALF_OPEN
+    }
+
+    public CircuitBreaker(int failureThreshold, long resetTimeout) {
+        this.failureThreshold = failureThreshold;
+        this.resetTimeout = resetTimeout;
+        this.failureCount = new AtomicInteger(0);
+        this.state = State.CLOSED;
+    }
+
+    public <T> T execute(Supplier<T> operation) throws Exception {
+        if (state == State.OPEN) {
+            if (System.currentTimeMillis() - lastFailureTime >= resetTimeout) {
+                state = State.HALF_OPEN;
+            } else {
+                throw new Exception("Circuit is OPEN");
+            }
+        }
+
+        try {
+            T result = operation.get();
+            reset();
+            return result;
+        } catch (Exception e) {
+            recordFailure();
+            throw e;
+        }
+    }
+
+    private void recordFailure() {
+        failureCount.incrementAndGet();
+        if (failureCount.get() >= failureThreshold) {
+            state = State.OPEN;
+            lastFailureTime = System.currentTimeMillis();
+        }
+    }
+
+    private void reset() {
+        failureCount.set(0);
+        state = State.CLOSED;
+    }
+
+    public State getState() {
+        return state;
+    }
+}
+
+// Simulated external service
+class ExternalService {
+    private static int callCount = 0;
+
+    public static String call() throws Exception {
+        callCount++;
+        if (callCount % 4 == 0) { // Simulate intermittent failures
+            throw new Exception("External service failed");
+        }
+        return "Success";
+    }
+}
+
+// Usage
+public class CircuitBreakerDemo {
+    public static void main(String[] args) {
+        CircuitBreaker circuitBreaker = new CircuitBreaker(3, 5000); // 3 failures, 5 second timeout
+
+        for (int i = 0; i < 10; i++) {
+            try {
+                String result = circuitBreaker.execute(() -> ExternalService.call());
+                System.out.println("Call " + i + ": " + result);
+            } catch (Exception e) {
+                System.out.println("Call " + i + ": " + e.getMessage());
+            }
+            System.out.println("Circuit state: " + circuitBreaker.getState());
+        }
+    }
+}
+
+```
+
+Explanation:
+- The Circuit Breaker pattern prevents an application from repeatedly trying to execute an operation that's likely to fail, allowing it to continue without waiting for the fault to be fixed or wasting CPU cycles.
+- In this example, we implement a simple circuit breaker that opens after a certain number of failures and resets after a timeout.
+
+Relevance in modern Java applications:
+- In microservices, circuit breakers are crucial for preventing cascading failures when one service is down.
+- In reactive systems, circuit breakers can be integrated with reactive streams to handle backpressure and failures.
+- In cloud-native apps, circuit breakers improve resilience in distributed systems with multiple points of failure.
+
+10. Strategy Pattern (Behavioral)
+
+
+
+```java
+import java.util.List;
+
+/**
+ * Strategy Pattern implementation for sorting algorithms
+ */
+public interface SortStrategy {
+    <T extends Comparable<T>> void sort(List<T> list);
+}
+
+public class BubbleSortStrategy implements SortStrategy {
+    @Override
+    public <T extends Comparable<T>> void sort(List<T> list) {
+        // Bubble sort implementation
+        System.out.println("Sorting using Bubble Sort");
+        // ... (implementation details omitted for brevity)
+    }
+}
+
+public class QuickSortStrategy implements SortStrategy {
+    @Override
+    public <T extends Comparable<T>> void sort(List<T> list) {
+        // Quick sort implementation
+        System.out.println("Sorting using Quick Sort");
+        // ... (implementation details omitted for brevity)
+    }
+}
+
+public class Sorter {
+    private SortStrategy strategy;
+
+    public void setStrategy(SortStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public <T extends Comparable<T>> void sort(List<T> list) {
+        if (strategy == null) {
+            throw new IllegalStateException("Sort strategy not set");
+        }
+        strategy.sort(list);
+    }
+}
+
+// Usage
+public class StrategyPatternDemo {
+    public static void main(String[] args) {
+        List<Integer> numbers = List.of(5, 2, 8, 1, 9);
+        Sorter sorter = new Sorter();
+
+        sorter.setStrategy(new BubbleSortStrategy());
+        sorter.sort(numbers);
+
+        sorter.setStrategy(new QuickSortStrategy());
+        sorter.sort(numbers);
+    }
+}
+
+```
+
+Explanation:
+- The Strategy pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable. It lets the algorithm vary independently from clients that use it.
+- In this example, we implement different sorting strategies that can be used interchangeably.
+
+Relevance in modern Java applications:
+- In microservices, strategies can be used to implement different business rules or processing algorithms that can be easily swapped or updated.
+- In reactive systems, strategies can represent different ways of processing reactive streams.
+- In cloud-native apps, strategies can be used to implement different scaling, caching, or data processing algorithms based on the deployment environment.
+
+These ten design patterns cover a wide range of scenarios commonly encountered in modern Java development. They provide solutions for creating flexible, maintainable, and scalable applications, particularly in the context of microservices, reactive systems, and cloud-native environments.
