@@ -8,7 +8,7 @@
    - Add a clear table of contents for easy navigation
 
 2. Specificity in Examples
-   - Provide more concrete examples of design patterns beyond just Singleton
+   - Provide more concrete examples of design patterns
    - Include code snippets to illustrate key concepts
 
 3. Modern Java Features
