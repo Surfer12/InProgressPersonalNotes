@@ -1,0 +1,23 @@
+Merge Sort and AI tool usage:
+
+I. Understand the Merge Sort Algorithm
+   A. Review the merge sort code from your slides to grasp its functionality.
+   B. Identify the key components of the algorithm, including the merge function.
+
+II. Utilize an AI Tool for Explanation
+   A. Select an AI tool of your choice.
+   B. Prompt the AI to explain the code and the merge function in detail.
+   C. Ask the AI to elaborate on the time and space complexity of merge sort.
+
+III. Iterate and Seek Clarifications
+   A. Review the AI's responses carefully.
+   B. If you have any doubts or need further elaboration, pose additional questions to the AI.
+
+IV. Compile Your Submission
+   A. Capture screenshots of your prompts and the AI's answers.
+   B. Write a brief paragraph expressing your thoughts on the AI's explanations.
+
+V. Submission
+   A. Submit your screenshots and a pdf with the brief paragraph.
+   B. State the AI tool you used in the submission.
+   C. Name the files appropriately CIS232_firstname_lastname

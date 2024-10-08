@@ -1,0 +1,12 @@
+Space Complexity with only variables declared: O(1)
+Space Complexity with additional space allocated: O(n)
+Utilizing recursion vs using iterative approach:
+- Recursion:
+  - Space Complexity: O(log n) due to the call stack.
+  - Pros:
+    - Elegant and easy to understand for some problems.
+    - Cleaner implementation for divide-and-conquer strategies.
+  - Cons:
+    - Can lead to stack overflow for large inputs.
+    - Slower compared to iterative approaches.
+
